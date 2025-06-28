@@ -4,91 +4,90 @@ import customtkinter as ctk
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
-def update_display(value):
-    freq_mhz = float(value)
-    gpu_clk_f = calculate_gpu_clk_f(freq_mhz)
-    hex_val = f"0x{gpu_clk_f:X}"
-    validated_freq = calculate_freq_from_gpu_clk_f(gpu_clk_f)
-
-    output_var.set(hex_val)
-    result_var.set(f"{validated_freq:.6f} MHz")
+def updateDisplay(value):
+    freqMhz = float(value)
+    gpu_clk_f = calcGpu_clk_f(freqMhz)
+    hexVal = f"0x{gpu_clk_f:X}"
+    validatedFreq = calcFreqFromGpu_clk_f(gpu_clk_f)
+    clockLabelResultVar.set(hexVal)
+    clockMhzLabelResultVar.set(f"{validatedFreq:.6f} MHz")
 
 # Calculate gpu_clk_f funtion
-def calculate_gpu_clk_f(freq_mhz):
+def calcGpu_clk_f(freqMhz):
     factor = (0 + 1) * (4 / 2)
-    gpu_clk_f = (freq_mhz * factor / 27) * 65536
+    gpu_clk_f = (freqMhz * factor / 27) * 65536
     return int(round(gpu_clk_f))
 
 # Calculate freqMhz from gpu_clk_f
-def calculate_freq_from_gpu_clk_f(gpu_clk_f):
+def calcFreqFromGpu_clk_f(gpu_clk_f):
     factor = (0 + 1) * (4 / 2)
     return 27 * (gpu_clk_f / 65536) / factor
 
 # Copy gpu_clk_f hex value to clipboard 
-def copy_to_clipboard():
-    app.clipboard_clear()
-    app.clipboard_append(output_var.get())
-    show_copy_alert()
+def copyToClipboard():
+    mainWindow.clipboard_clear()
+    mainWindow.clipboard_append(clockLabelResultVar.get())
+    showCopyAlertTopLevel()
     
-# Modify max slider values based on checkbox state
-def unsafe_clocks_slider():
-    if check_var.get() == 1:
-        slider.configure(to=799.999775)
-        clock_label.configure(text_color="red")
-        slider.set(549.999775)
-        update_display(slider.get())
+# Modify max sliderMhz values based on unsafeClocksCheckBox state
+def unsafeClocksSliderMhz():
+    if unsafeClocksCheckBoxVar.get() == 1:
+        sliderMhz.configure(to=799.999775)
+        clockMhzLabel.configure(text_color="red")
+        sliderMhz.set(549.999775)
+        updateDisplay(sliderMhz.get())
     else:
-        slider.configure(to=749.999775)
-        clock_label.configure(text_color="green")
-        slider.set(549.999775)
-        update_display(slider.get())
+        sliderMhz.configure(to=699.574837)
+        clockMhzLabel.configure(text_color="green")
+        sliderMhz.set(549.999775)
+        updateDisplay(sliderMhz.get())
 
-def show_copy_alert():
-    alert = ctk.CTkToplevel(app)
-    alert.title("Copied!")
-    alert.geometry("420x120")
-    alert.resizable(False, False)
-    alert.wait_visibility()
-    alert.grab_set()
+def showCopyAlertTopLevel():
+    copyAlertTopLevel = ctk.CTkToplevel(mainWindow)
+    copyAlertTopLevel.title("Copied!")
+    copyAlertTopLevel.geometry("420x120")
+    copyAlertTopLevel.resizable(False, False)
+    copyAlertTopLevel.wait_visibility()
+    copyAlertTopLevel.grab_set()
     
-    frame_alert = ctk.CTkFrame(alert)
-    frame_alert.pack(fill="x",
+    frameCopyAlertTopLevel = ctk.CTkFrame(copyAlertTopLevel)
+    frameCopyAlertTopLevel.pack(fill="x",
                      padx=20,
                      pady=(15, 5)
                     )
 
-    ctk.CTkLabel(frame_alert,
+    ctk.CTkLabel(frameCopyAlertTopLevel,
                  text="I am not responsible for any damage caused by using this tool.",
                  font=("Helvetica", 12, "bold"),
                  text_color="red"
                 ).pack(pady=(10, 10))
 
-    ctk.CTkButton(alert,
+    ctk.CTkButton(copyAlertTopLevel,
                   text="OK",
                   corner_radius=4,
                   fg_color="red",
                   hover_color="darkred",
                   width=100,
-                  command=alert.destroy
+                  command=copyAlertTopLevel.destroy
                  ).pack(pady=10,
                         padx=20,
                         anchor="e"
                        )
 
 # GUI setup
-app = ctk.CTk()
-app.title("Wii U GX2 Clock Tool")
-app.geometry("420x275")
-app.resizable(False, False)
+mainWindow = ctk.CTk()
+mainWindow.title("Wii U GX2 Clock Tool")
+mainWindow.geometry("420x275")
+mainWindow.resizable(False, False)
 
 # Frame 1
-frame_top = ctk.CTkFrame(app)
-frame_top.pack(fill="x",
+frameTop = ctk.CTkFrame(mainWindow)
+frameTop.pack(fill="x",
                padx=20,
                pady=(15, 5)
               )
 
-ctk.CTkLabel(frame_top,
+ctk.CTkLabel(frameTop,
              text="GX2 Clock:",
              font=("Helvetica", 12, "bold")
             ).pack(pady=(10, 5),
@@ -96,66 +95,66 @@ ctk.CTkLabel(frame_top,
                    anchor="w"
                   )
 
-slider = ctk.CTkSlider(frame_top,
+sliderMhz = ctk.CTkSlider(frameTop,
                        from_=549.999775,
-                       to=749.999775,
+                       to=699.574837,
                        number_of_steps=250,
-                       command=update_display
+                       command=updateDisplay
                       )
-slider.set(549.999775)
-slider.pack(fill='x',
+sliderMhz.set(549.999775)
+sliderMhz.pack(fill='x',
             padx=20
            )
 
-result_var = ctk.StringVar()
-clock_label = ctk.CTkLabel(frame_top,
-                           textvariable=result_var,
+clockMhzLabelResultVar = ctk.StringVar()
+clockMhzLabel = ctk.CTkLabel(frameTop,
+                           textvariable=clockMhzLabelResultVar,
                            font=("Helvetica", 24, "bold")
                           )
-clock_label.configure(text_color="green")
-clock_label.pack(pady=(10, 10))
+clockMhzLabel.configure(text_color="green")
+clockMhzLabel.pack(pady=(10, 10))
 
 # Frame 2
-frame_bottom = ctk.CTkFrame(app)
-frame_bottom.pack(fill="x",
+frameBottom = ctk.CTkFrame(mainWindow)
+frameBottom.pack(fill="x",
                   padx=20,
                   pady=(5, 5)
                  )
 
-output_var = ctk.StringVar()
-ctk.CTkLabel(frame_bottom,
+clockLabelResultVar = ctk.StringVar()
+ctk.CTkLabel(frameBottom,
              text="gpu_clk_f:",
              font=("Helvetica", 12, "bold")
             ).pack(pady=(10, 5),
                    padx=(10, 5),
                    anchor="w"
                   )
-ctk.CTkLabel(frame_bottom,
-             textvariable=output_var,
+ctk.CTkLabel(frameBottom,
+             textvariable=clockLabelResultVar,
              font=("Courier", 24, "bold")
             ).pack(pady=(0, 10))
             
-check_var = ctk.IntVar()
-checkbox = ctk.CTkCheckBox(app,
+unsafeClocksCheckBoxVar = ctk.IntVar()
+unsafeClocksCheckBox = ctk.CTkCheckBox(mainWindow,
                            text="Enable Unsafe Clocks",
-                           variable=check_var,
-                           command=unsafe_clocks_slider
+                           variable=unsafeClocksCheckBoxVar,
+                           command=unsafeClocksSliderMhz
                           )
-checkbox.pack(padx=20,
+unsafeClocksCheckBox.pack(padx=20,
               pady=5,
               side=ctk.LEFT
              )
-ctk.CTkButton(app,
+ctk.CTkButton(mainWindow,
               text="Copy",
               corner_radius=4,
               width=100,
-              command=copy_to_clipboard
+              command=copyToClipboard
              ).pack(padx=20,
                     pady=5,
                     side=ctk.RIGHT,
                     anchor="e"
                    )
 
-# Main
-update_display(slider.get())
-app.mainloop()
+# Main Loop
+updateDisplay(sliderMhz.get())
+mainWindow.mainloop()
