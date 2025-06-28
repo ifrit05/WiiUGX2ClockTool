@@ -48,6 +48,7 @@ def show_copy_alert():
     alert.title("Copied!")
     alert.geometry("420x120")
     alert.resizable(False, False)
+    alert.wait_visibility()
     alert.grab_set()
     
     frame_alert = ctk.CTkFrame(alert)
