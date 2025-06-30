@@ -12,17 +12,14 @@ DEFAULT_FREQ = 549.999775
 
 # Calculation Functions
 def calc_gpu_clk_f(freq_mhz):
-    """Calculate gpu_clk_f from frequency in MHz."""
     gpu_clk_f = (freq_mhz * CLK_FACTOR / CLKXTAL_FREQ) * CLK_SCALE
     return int(round(gpu_clk_f))
 
 def calc_freq_from_gpu_clk_f(gpu_clk_f):
-    """Calculate frequency in MHz from gpu_clk_f."""
     return CLKXTAL_FREQ * (gpu_clk_f / CLK_SCALE) / CLK_FACTOR
 
 # UI Update Functions
 def update_display(value):
-    """Update the displayed values based on slider input."""
     freq_mhz = float(value)
     gpu_clk_f = calc_gpu_clk_f(freq_mhz)
     hex_val = f"0x{gpu_clk_f:X}"
@@ -31,7 +28,6 @@ def update_display(value):
     clock_mhz_label_result_var.set(f"{validated_freq:.6f} MHz")
 
 def unsafe_clocks_slider_mhz():
-    """Adjust slider and label for unsafe clocks option."""
     if unsafe_clocks_checkbox_var.get() == 1:
         slider_mhz.configure(to=UNSAFE_MAX_FREQ)
         clock_mhz_label.configure(text_color="red")
